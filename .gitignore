@@ -1,0 +1,15 @@
+# Secrets — never commit real API keys
+.env
+
+# Generated database (your data, not your code — don't version it)
+*.db
+job_tracker.db
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS clutter
+.DS_Store
