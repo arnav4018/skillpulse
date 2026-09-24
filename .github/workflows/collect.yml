@@ -1,0 +1,53 @@
+name: Weekly Job Collection
+
+# Two ways this workflow can start:
+#   1. On a schedule (cron) — runs automatically, no one watching.
+#   2. workflow_dispatch — adds a manual "Run workflow" button on GitHub,
+#      so you can test this immediately instead of waiting for Monday.
+on:
+  schedule:
+    - cron: '0 3 * * 1'   # minute hour day month weekday -> Mondays, 03:00 UTC
+  workflow_dispatch: {}
+
+# The workflow needs permission to push a commit back to this repo
+# (the default token GitHub gives a workflow is read-only unless you ask for this).
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: get a copy of your repo (including last run's job_tracker.db)
+      # onto this fresh virtual machine.
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # Step 2: install Python on this machine — it doesn't come with one preloaded.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Step 3: install requests / python-dotenv, same as you did locally.
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Step 4: run the actual collector. ADZUNA_APP_ID / ADZUNA_APP_KEY come from
+      # GitHub's encrypted repo secrets, not from a .env file — Actions machines
+      # never see your local .env at all.
+      - name: Run collector
+        env:
+          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+        run: python fetch_jobs.py --query "data analyst" --pages 3
+
+      # Step 5: commit the updated job_tracker.db back into the repo, so next
+      # week's run starts from this week's accumulated data instead of empty.
+      - name: Commit updated database
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add job_tracker.db
+          git diff --cached --quiet || git commit -m "Automated data collection $(date -u +'%Y-%m-%d')"
+          git push

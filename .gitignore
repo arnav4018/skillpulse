@@ -1,9 +1,11 @@
 # Secrets — never commit real API keys
 .env
 
-# Generated database (your data, not your code — don't version it)
+# job_tracker.db IS committed from Phase 2 onward — GitHub Actions has no
+# persistent disk, so the DB has to live in the repo to survive between
+# scheduled runs. Only ignore OTHER local/test databases here.
 *.db
-job_tracker.db
+!job_tracker.db
 
 # Python
 __pycache__/
