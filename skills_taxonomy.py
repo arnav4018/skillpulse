@@ -23,7 +23,7 @@ SKILL_TAXONOMY = {
     # Programming / query languages
     "Python": ["python"],
     "SQL": ["sql", "mysql", "postgresql", "ms sql", "t-sql", "pl/sql"],
-    "R": ["r programming", " r,", " r "],  # deliberately narrow — "R" alone is too ambiguous to regex-match safely
+    "R": ["r programming", "r"],  # \b (regex) / token matching (spaCy) already bound this correctly - no padding needed
     "VBA": ["vba", "visual basic for applications"],
 
     # Core data/analyst libraries
@@ -54,7 +54,7 @@ SKILL_TAXONOMY = {
     "Spark": ["apache spark", "pyspark", " spark "],
     "Hadoop": ["hadoop"],
     "Airflow": ["airflow", "apache airflow"],
-    "ETL": ["etl", "extract transform load", "extract, transform, load"],
+    "ETL": ["etl", "extract transform load", "extract, transform, load", "elt", "data mapping"],
 
     # Cloud
     "AWS": ["aws", "amazon web services"],
@@ -73,6 +73,16 @@ SKILL_TAXONOMY = {
     # Soft/analyst-specific terms worth tracking even if not "technical skills"
     "Data Visualization": ["data visualization", "data visualisation"],
     "Dashboarding": ["dashboard", "dashboards", "dashboarding"],
+
+    # Added from Phase 2 evaluation-harness findings (real gaps confirmed against
+    # a hand-labeled sample — see evaluate_extractor.py) — deliberately excludes
+    # generic job-function phrases like "data analysis" or "business insights"
+    # that appear in nearly every posting regardless of which tools are trending.
+    "SAP": ["sap"],
+    "Business Intelligence": ["business intelligence", "bi tools"],
+    "Data Warehousing": ["data warehousing", "data warehouse"],
+    "EDA": ["eda", "exploratory data analysis"],
+    "Data Wrangling": ["data wrangling"],
 }
 
 # Phrases used to heuristically flag a posting as "fresher / entry-level".

@@ -40,7 +40,7 @@ import requests
 from dotenv import load_dotenv
 
 from skills_taxonomy import FRESHER_KEYWORDS
-from skill_extractor import extract_skills
+from nlp_skill_extractor import extract_skills
 
 load_dotenv()
 
